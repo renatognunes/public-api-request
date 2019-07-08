@@ -5,12 +5,12 @@ const gallery = document.getElementById('gallery');
 // ------------------------------------------
 let employees;
 
-fetch('https://randomuser.me/api/?results=12')
+fetch('https://randomuser.me/api/?results=12&nat=us')
     .then(checkStatus)
     .then(response => response.json())
-    .then(data => employees = data)
-    .then(generateGallery)
-    .then(displayModal)
+    .then(data => employees = data.results)
+    .then(data => generateGallery(data))   
+    .then(() => displayModal(employees))
     .catch(error => console.log('There was a problem!', error));
 
 // ------------------------------------------
@@ -25,7 +25,8 @@ function checkStatus(response) {
 }
 
 function generateGallery(data) {
-    const cards = data.results.map( employee => `
+
+    const cards = data.map( employee => `
         <div class="card">
             <div class="card-img-container">
                 <img class="card-img" src="${employee.picture.large}" alt="profile picture">
@@ -42,7 +43,7 @@ function generateGallery(data) {
 
 
 function generateModal(data, index) {
-    const employee = data.results[index];
+    const employee = data[index];
     return modal = `
         <div class="modal">
             <button type="button" id="modal-close-btn" class="modal-close-btn"><strong>X</strong></button>
@@ -69,19 +70,19 @@ function generateModal(data, index) {
 
 let employeeNumber = 0;
 
-function displayModal() {
+function displayModal(data) {
     for(let i = 0; i < gallery.children.length; i++) {
         gallery.children[i].addEventListener('click', () => {
 
             const modalContainer = document.createElement('div');
             modalContainer.classList.add('modal-container');
-            modalContainer.innerHTML = generateModal(employees, i);
+            modalContainer.innerHTML = generateModal(data, i);
             gallery.parentNode.insertBefore(modalContainer, gallery.nextSibling);
 
             employeeNumber = i;
 
             closeButton();
-            controller();
+            controller(data);
         });
     }
 }
@@ -95,14 +96,14 @@ function closeButton() {
 }
 
 
-function controller() {
+function controller(data) {
     const modalPrev = document.querySelector('#modal-prev');
     modalPrev.addEventListener('click', () => {
 
-        if(employeeNumber <= 11 && employeeNumber > 0) {
+        if(employeeNumber < data.length && employeeNumber > 0) {
             employeeNumber -= 1;
 
-            const employee = employees.results[employeeNumber];
+            const employee = data[employeeNumber];
 
             const modalContainer = document.querySelector('.modal-info-container');
             modalContainer.innerHTML = `
@@ -120,10 +121,10 @@ function controller() {
     const modalNext = document.querySelector('#modal-next');
     modalNext.addEventListener('click', () => {
 
-        if(employeeNumber < 11 && employeeNumber >= 0) {
+        if(employeeNumber < (data.length -1) && employeeNumber >= 0) {
             employeeNumber += 1;
 
-            const employee = employees.results[employeeNumber];
+            const employee = data[employeeNumber];
     
             const modalContainer = document.querySelector('.modal-info-container');
             modalContainer.innerHTML = `
@@ -140,4 +141,52 @@ function controller() {
 }
 
 
+// ------------------------------------------
+//  SEARCH
+// ------------------------------------------
+const searchContainer = document.querySelector('.search-container');
+searchContainer.insertAdjacentHTML("afterbegin", `<form action="#" method="get">
+<input type="search" id="search-input" class="search-input" placeholder="Search...">
+<input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+</form>`);
 
+const noResults = document.createElement('h3');
+noResults.textContent = 'No Results Found!';
+noResults.style.display = 'none'
+gallery.parentNode.insertBefore(noResults, gallery.nextSibling);
+
+searchButton = document.getElementById('search-submit');
+// Search bar Event Listener
+searchButton.addEventListener('click', () => {
+
+  search(searchInput.value.toLowerCase(), employees)
+    
+});
+
+searchInput = document.getElementById('search-input');
+//The 'keyup' listener is a fast and sophisticated way to display the results as the user type for a search.
+searchInput.addEventListener('keyup', () => {
+
+    search(searchInput.value.toLowerCase(), employees)
+   
+});
+
+let searchResults = [];
+function search(input, filteredEmployees) {
+    searchResults = filteredEmployees.filter( employee => 
+        employee.name.first.includes(input) || employee.name.last.includes(input))
+
+        if (input === "") {
+            generateGallery(employees);
+            displayModal(employees);
+            noResults.style.display = 'none';
+        } else {
+            generateGallery(searchResults);
+            displayModal(searchResults);
+            noResults.style.display = 'none';
+
+            if(searchResults.length === 0) {
+                noResults.style.display = '';
+            }
+        }
+}
