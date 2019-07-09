@@ -31,7 +31,7 @@ Basics methods and technics:
 
 Examiner 
 For styling, I've chosen a minimalist approach. 
-I removed all the bolders from the cards gallery and modals.
+I removed all the borders from the cards gallery and modals.
 I've added transitions with transform to the card's gallery. 
 I added a message to the DOM when a search is not found (even though it was not required).
 I've made changes in the CSS colors and added darker colors to the modal buttons when the mouse is hover it.
