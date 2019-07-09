@@ -1,9 +1,19 @@
+/** Initial global variables */
 const gallery = document.getElementById('gallery');
+/** This variable will hold the data from the fetch URL */
 let employees;
+
 
 // ------------------------------------------
 //  FETCH FUNCTIONS
 // ------------------------------------------
+
+/** 
+ * Fetch data from public API and retrieve data to a global variable.
+ * @callback generateGalley
+ * @callback displayModal
+ * @param {array} employees
+ */
 fetch('https://randomuser.me/api/?results=12&nat=us')
     .then(checkStatus)
     .then(response => response.json())
@@ -14,9 +24,15 @@ fetch('https://randomuser.me/api/?results=12&nat=us')
     })
     .catch(error => console.log('There was a problem!', error));
 
+
 // ------------------------------------------
 //  HELPER FUNCTIONS
 // ------------------------------------------
+
+/** 
+ * Check status of a promise.
+ * @param {promise} response
+ */
 function checkStatus(response) {
     if (response.ok) {
         return Promise.resolve(response);
@@ -25,6 +41,10 @@ function checkStatus(response) {
     }
 }
 
+/** 
+ * Generate HTML block of elements for each item in the array and append to the DOM.
+ * @param {array}
+ */
 function generateGallery(data) {
     const cards = data.map( employee => `
         <div class="card">
@@ -41,6 +61,10 @@ function generateGallery(data) {
     gallery.innerHTML = cards;
 };
 
+/** 
+ * Generate the modal HTML container skeleton.
+ * @return {string}
+ */
 function generateModalContainer() {
     return modalContainer = `
     <div class="modal-container">
@@ -56,6 +80,12 @@ function generateModalContainer() {
     </div>`
 };
 
+/** 
+ * Generate a HTML modal container with info from an employee using an array as argument and an index to specify the item to be used as parameter.
+ * @param {number}
+ * @param {array}
+ * Append the HTML block to modal skeleton generated in the function above.
+ */
 function generateModalInfoContainer(data, index) {
     const employee = data[index];
     const modalInfoContainer = document.querySelector('.modal-info-container');
@@ -70,22 +100,36 @@ function generateModalInfoContainer(data, index) {
         <p class="modal-text">Birthday: ${employee.dob.date.substring(5, 7)}/${employee.dob.date.substring(8, 10)}/${employee.dob.date.substring(0, 4)}</p>`;
 };
 
-//https://stackoverflow.com/questions/196972/convert-string-to-title-case-with-javascript/196991#196991
+/** 
+ * Format the phone number wit regex.
+ * @param {string}
+ * @return {string} formated phone number
+ */
+function formatPhoneNumber(phone) {
+    return phone.replace(/^\(?([0-9]{3})\)?[-]?([0-9]{3})[-]?([0-9]{4})$/, '($1) $2-$3')
+};
+
+/** 
+ * Format address string to first characters uppercase.
+ * @param {string}
+ * Code adapted from {@link https://stackoverflow.com/questions/196972/convert-string-to-title-case-with-javascript/196991#196991}
+ * @return {string} formated address
+ */
 function toTitleCase(str) {
     return str.replace(
-        /\w\S*/g,
-        function(txt) {
+        /\w\S*/g, function(txt) {
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         }
-    );
-}
+    )
+};
 
-function formatPhoneNumber(str) {
-return str.replace(/^\(?([0-9]{3})\)?[-]?([0-9]{3})[-]?([0-9]{4})$/, '($1) $2-$3')
-}
-
-//https://gist.github.com/calebgrove/c285a9510948b633aa47
-getStateTwoDigitCode = function (stateFullName) {
+/** 
+ * Format state to two characters abbreviated format.
+ * @param {string}
+ * Code adapted from {@link https://gist.github.com/calebgrove/c285a9510948b633aa47}
+ * @return {string} formated state
+ */
+function getStateTwoDigitCode(stateFullName) {
     return this.stateList[stateFullName];
     }
     
@@ -142,12 +186,23 @@ getStateTwoDigitCode = function (stateFullName) {
     'wyoming': 'WY',
 }
 
+
 // ------------------------------------------
 //  EVENT LISTENERS
 // ------------------------------------------
 
+/** Holds the index of the clicked card in the gallery */
 let employeeNumber = 0;
 
+/** 
+ * Create an event listener to each card in galery.
+ * @param {array}
+ * The index of the clicked card is used as an argument to invoke the following functions.
+ * @fires generateModalContainer
+ * @fires generateModalIndoContainer
+ * Assign the card index clicked to the cardIndex variable.
+ * @fires toggleModal passing the same parameter its argument.
+ */
 function displayModal(data) {
     for(let i = 0; i < gallery.children.length; i++) {
         gallery.children[i].addEventListener('click', () => {
@@ -161,6 +216,11 @@ function displayModal(data) {
     }
 }
 
+/** 
+ * Create an event listener to the modal buttons, CloseButton, NextModal, and PrevModal.
+ * The event listener will use the cardIndex value to toggle the modals back and forth.
+ * @param {array}
+ */
 function toggleModal(data) {
     const modal = document.querySelector('.modal-container');
 
@@ -189,6 +249,8 @@ function toggleModal(data) {
 // ------------------------------------------
 //  SEARCH
 // ------------------------------------------
+
+/** Append the search bar to the DOM */
 const searchContainer = document.querySelector('.search-container');
 searchContainer.insertAdjacentHTML("afterbegin", `
     <form action="#" method="get">
@@ -197,25 +259,41 @@ searchContainer.insertAdjacentHTML("afterbegin", `
     </form>
 `);
 
-const noResults = document.createElement('h3');
+/** Append a message to the DOM in case no results in found during the search */
+const noResults = document.createElement('h2');
 noResults.textContent = 'No Results Found!';
 noResults.style.display = 'none'
 gallery.parentNode.insertBefore(noResults, gallery.nextSibling);
 
 
-// Search bar Event Listener
+/** Search bar Event Listener 
+ * @fires search function passing input as its argument.
+*/
 searchButton = document.getElementById('search-submit');
 searchButton.addEventListener('click', () => {
   search(searchInput.value.toLowerCase(), employees)
 });
 
-//The 'keyup' listener is a fast and sophisticated way to display the results as the user type for a search.
+/**
+ * The 'keyup' listener is a fast and sophisticated way to display the results as the user type for a search.
+ * @fires search function passing input as its argument.
+ */
 searchInput = document.getElementById('search-input');
 searchInput.addEventListener('keyup', () => {
     search(searchInput.value.toLowerCase(), employees)
 });
 
+/** Hold the elements filtered from the search */
 let searchResults = [];
+
+/**
+ * Takes the input from the user and filter the current elements in the employee array.
+ * @param {string} input
+ * @param {array} employee
+ * If the search input value is empty it will display all cards in the gallery.
+ * Else it will display the cards filtered and assigned to the seachResults variable.
+ * If no results has been found, a message will be displayed. 
+ */
 function search(input, filteredEmployees) {
     searchResults = filteredEmployees.filter( employee => 
         employee.name.first.includes(input) || employee.name.last.includes(input) );
