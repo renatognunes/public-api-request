@@ -29,7 +29,8 @@ Basics methods and technics:
 - JSDoc 3
 
 
-Examiner 
+Examiner:
+
 For styling, I've chosen a minimalist approach. 
 I removed all the borders from the cards gallery and modals.
 I've added transitions with transform to the card's gallery. 
