@@ -1,6 +1,6 @@
-/** Initial global variables */
+/** Initial global variable */
 const gallery = document.getElementById('gallery');
-/** This variable will hold the data from the fetch URL */
+/** This variable will hold the data from the fetch API request */
 let employees;
 
 
