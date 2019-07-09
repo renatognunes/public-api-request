@@ -5,28 +5,28 @@ The user can select an employee by clicking on a card and will display detailed 
 The user has a search tool which he can use to search for a specific employee. The search will filter all matched results searching for first or last name. When an employee card is clicked, the modal with all information from that employee is displayed, the user can use the buttons at the bottom of the modal to navigate through the employee's dictionary. This project was built with the intention of better understanding HTTP requests, Fetch API, Promises and Asynchronous Programming.
 
 Languages:
-Javascript ES6
-JSON
-CSS3
-HTML5
+- Javascript ES6
+- JSON
+- CSS3
+- HTML5
 
 Tools:
-Visual Studio Code
-DevTools Google Chrome
-Git
-Node
+- Visual Studio Code
+- DevTools Google Chrome
+- Git
+- Node
 
 Basics methods and technics:
-Asynchronous Programming
-HTTP Resquest
-Fetch API
-Promises
-Higher-Order Functions
-Callback Functions
-DOM Manipulation
-Loopings and Conditionals
-Events and Handlers
-JSDoc 3
+- Asynchronous Programming
+- HTTP Resquest
+- Fetch API
+- Promises
+- Higher-Order Functions
+- Callback Functions
+- DOM Manipulation
+- Loopings and Conditionals
+- Events and Handlers
+- JSDoc 3
 
 
 Examiner 
